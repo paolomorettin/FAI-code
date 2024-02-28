@@ -3,6 +3,10 @@ Python3 code for the Fundamentals of AI course lab.
 
 Feel free to reuse / distribute / contribute.
 
+# Contributors:
+Mattia Rigon (2024) - Added support for LRTA* with non-uniform action costs.
+
+
 ## 02 - Uninformed search algorithms
 
 Extra required packages: `matplotlib`, `networkx`, `numpy`.
