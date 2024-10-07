@@ -33,7 +33,9 @@ def hill_climbing(it, mode, obj, curr, choices, bounds=[0,10], printer=None):
     else:
 
         if mode == 'steepest':
-            nxt, _ = sorted(higher_neighbors, key=lambda x : (x[1],x[0]))[-1]
+            sorted_neighbors = sorted(higher_neighbors, key=lambda x : (x[1],x[0]))
+            print("SORTED:", sorted_neighbors)
+            nxt, _ = sorted_neighbors[-1]
 
         elif mode == 'stochastic':
             nxt, _ = select_choice(higher_neighbors, choices)
@@ -62,14 +64,14 @@ if __name__ == '__main__':
 
     xbounds = [0,10] # bounds to input variables
     ybounds = [0,20] # bounds to the objective function
-    seed = 666 # generation seed
+    seed = 121 # generation seed
     initial = (5,4) # initial state
 
     np.random.seed(seed)
 
     # predetermined non-deterministic choices
     n_choices = 4
-    choices = [round(np.random.random(), 1) for _ in range(n_choices)]
+    choices = None #[round(np.random.random(), 1) for _ in range(n_choices)]
     
 
     # generating the objective function

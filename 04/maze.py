@@ -34,21 +34,8 @@ class Maze:
 
         np.random.seed(seed)
 
-        if init is not None:
-            self.init = init
-        else:
-            candidates = list(self.G.nodes)
-            self.init = candidates[np.random.randint(0, len(candidates))]
-
-
-        if goal is not None:
-            self.goal = goal
-        else:
-            candidates = list(set(self.G.nodes) - {self.init})
-            self.goal = candidates[np.random.randint(0, len(candidates))]
-
         # generate edges
-        reached = {self.init}
+        reached = {(0,0)}# if init is None else init}
         while True:
             candidates = {(r, rn) for r in reached for rn in neighbors(r)
                           if rn not in reached}
@@ -59,6 +46,19 @@ class Maze:
             r, rn = list(candidates)[np.random.randint(len(candidates))]
             self.G.add_edge(r, rn)
             reached.add(rn)
+
+        if init is not None:
+            self.init = init
+        else:
+            candidates = list(self.G.nodes)
+            self.init = candidates[np.random.randint(0, len(candidates))]
+
+        if goal is not None:
+            self.goal = goal
+        else:
+            candidates = list(set(self.G.nodes) - {self.init})
+            self.goal = candidates[np.random.randint(0, len(candidates))]
+
 
 
     def actions(self, node):

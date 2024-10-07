@@ -25,9 +25,11 @@ def lrtastar_printer(it, maze, s_curr, s_prev, a, result, H):
     hstr = H[s_curr] if s_curr in H else '-'
     print("---")
     print("s':", s_curr, "s:", s_prev, "a:", a)
-    print("result[s']:", restr)
-    print("result[s]:", restr2)
-    print("H[s']:", hstr)
+    #print("result[s']:", restr)
+    #print("result[s]:", restr2)
+    #print("H[s']:", hstr)
+    #print("result:", result)
+    print("H:", H)
     print()
 
     maze.plot(s_curr)
@@ -157,6 +159,7 @@ def lrtastar(maze, h, printer=None):
 
         a_costs = [(a, lrtas_cost(maze, s_curr, a, result, H, h))
                    for a in maze.actions(s_curr)]
+
         a_costs.sort(key=lambda x : (x[1], 'NESW'.index(x[0])))
         a = a_costs[0][0] # lower estimated cost action
 
@@ -167,12 +170,18 @@ def lrtastar(maze, h, printer=None):
 
 if __name__ == '__main__':
 
+    def simple_printer(it, maze, s_curr, *args):
+        print(s_curr)
+        maze.plot(s_curr)
+
     from maze import Maze
-    test_maze = Maze(2)
-    test_maze.random(666)
+    maze = Maze(2)
+    maze.random(777, init=(2,1), goal=(0,0))
+
+    
     # uncomment this for ODFS
-    #online_dfs(test_maze, printer=odfs_printer)
-    lrtastar(test_maze, manhattan, printer=lrtastar_printer)
+    online_dfs(maze, printer=simple_printer)
+    #lrtastar(maze2, manhattan, printer=lrtastar_printer)
 
             
             
