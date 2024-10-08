@@ -7,14 +7,14 @@ Feel free to reuse / distribute / contribute.
 Mattia Rigon (2024) - Added support for LRTA* with non-uniform action costs.
 
 
-## 02 - Uninformed search algorithms
+## LAB 02/03 - Search algorithms
 
 Extra required packages: `matplotlib`, `networkx`, `numpy`.
 
-To run: `python3 search.py`.
+In `search/`, run: `python3 search.py alg`, where `alg` in `{bfs, dfs, ucs, greedy, astar}`
 
 
-## 04 - Local / online search algorithms
+## 04 - Local / online search algorithms (**To be refactored**)
 
 Extra required packages: `matplotlib`, `networkx`, `numpy`, `seaborn`.
 
