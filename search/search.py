@@ -167,26 +167,53 @@ if __name__ == '__main__':
     parser.add_argument('alg', type=str,
                         help="Algorithm")
 
-    parser.add_argument('--problem', type=str,
-                        help="Problem",
-                        default="weighted1")
+    parser.add_argument('--example', type=str,
+                        help=f"One of {exercises.named_exercises}",
+                        default=None)
 
+    parser.add_argument('--grid_size', type=int, nargs=2,
+                        help=f"(width, height)",
+                        default=(3,3))
+
+    parser.add_argument('--p_edge', type=float,
+                        help=f"Edge probability",
+                        default=1.0)
+
+    parser.add_argument('--cost', type=int, nargs=2,
+                        help=f"(mincost, maxcost)",
+                        default=(1,10))
+
+    parser.add_argument('--initial', type=int,
+                        help=f"Initial state",
+                        default=None)
+
+    parser.add_argument('--goal', type=int,
+                        help=f"Goal state",
+                        default=None)
+    
     parser.add_argument('--seed', type=int,
                         help="Random seed number",
                         default=666)
 
     args = parser.parse_args()
 
-    if args.problem.startswith("grid"):
-        try:
-            _, w, h, p_edge = args.problem.split("-")
-        except ValueError:
-            w, h, p_edge = 4, 3, 0.8
+    if args.example is not None:
+        if args.example in exercises.named_exercises:
+            problem = exercises.named_exercises[args.example]
+        else:
+            raise NotImplementedError(f"Example {args.example} not found.")
 
-        problem = exercises.random_grid_problem(int(w), int(h), p_edge=float(p_edge), seed=args.seed)
+    else:
 
-    elif args.problem in exercises.named_exercises:        
-        problem = exercises.named_exercises[args.problem]
+        w, h = map(int, tuple(args.grid_size))
+        problem = exercises.random_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
+
+        if args.initial is not None:
+            problem.initial = args.initial
+
+        if args.goal is not None:
+            problem.goal = {args.goal}
+
     
     #printer = cli_printer     # uncomment for a command line interface printer
     printer = pyplot_printer     # uncomment for a graphical (pyplot-based) printer
