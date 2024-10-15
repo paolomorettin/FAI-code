@@ -3,6 +3,11 @@ manhattan = lambda maze, s : abs(maze.goal[0] - s[0]) + abs(maze.goal[1] - s[1])
 
 action_costs = {'N' : 1, 'E' : 2, 'S' : 5, 'W' : 1}
 
+def simple_printer(it, maze, s_curr, *args):
+    print(s_curr)
+    maze.plot(s_curr)
+
+
 def odfs_printer(it, maze, s_curr, s_prev, a, result, untried, unbacktracked):
 
     restr = result[s_curr] if s_curr in result else '-'
@@ -117,9 +122,6 @@ def lrtastar(maze, h, printer=None):
         else:
             return h(maze, s)
 
-
-        
-
     s_prev, a = None, None
     result = dict()
     H = dict()
@@ -172,18 +174,40 @@ def lrtastar(maze, h, printer=None):
 
 if __name__ == '__main__':
 
-    def simple_printer(it, maze, s_curr, *args):
-        print(s_curr)
-        maze.plot(s_curr)
 
+    import argparse
     from maze import Maze
-    maze = Maze(2)
-    maze.random(777, init=(2,1), goal=(0,0))
-
     
-    # uncomment this for ODFS
-    online_dfs(maze, printer=simple_printer)
-    #lrtastar(maze2, manhattan, printer=lrtastar_printer)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('alg', type=str,
+                        help=f"'odfs' or 'lrtastar'")
+
+    parser.add_argument('--size', type=int,
+                        help=f"grid size",
+                        default=2)
+
+    parser.add_argument('--initial', type=int, nargs=2,
+                        help=f"initial coordinates",
+                        default=(1,1))
+
+    parser.add_argument('--goal', type=int, nargs=2,
+                        help=f"goal coordinates",
+                        default=(1,0))
+    
+    parser.add_argument('--seed', type=int,
+                        help="Random seed number",
+                        default=666)
+
+    args = parser.parse_args()
+    
+    maze = Maze(args.size)
+    maze.random(args.seed, init=tuple(args.initial), goal=tuple(args.goal))
+
+    if args.alg == 'odfs':
+        online_dfs(maze, printer=odfs_printer)
+    elif args.alg == 'lrtastar':
+        lrtastar(maze, manhattan, printer=lrtastar_printer)
 
             
             

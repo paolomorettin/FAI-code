@@ -37,4 +37,7 @@ arguments.
 
 ### Online search
 
-To run or online A* (online DFS is commented) on maze problems, try: `python3 online_search.py`.
+To run the online seach algorithms on Maze problems,
+try: `python3 online_search.py alg`, where `alg` in `[odfs,
+lrtastar]`. Use the `-h` flag for help on
+optional arguments.
