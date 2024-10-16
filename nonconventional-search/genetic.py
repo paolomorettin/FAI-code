@@ -12,12 +12,17 @@ def pp(p):
     return "[" + "-".join([f"{FEATS[i][p[i]]}" for i in range(len(p))]) + "]"
 
 def select_parents(pop, obj, choices):
+
+    print("\tSelecting parents")
     
     i1, _ = select_choice([(i, obj(p)) for i, p in enumerate(pop)],
                           choices)
+
+    print("\tparent1:", pp(pop[i1]))
     
     i2, _ = select_choice([(i, obj(p)) for i, p in enumerate(pop) if i != i1],
                           choices)
+    print("\tparent2:", pp(pop[i2]))
 
     return pop[i1], pop[i2]
     
@@ -27,23 +32,32 @@ def reproduce(p1, p2, choices):
     
     assert(len(FEATS) == len(p1))
     assert(len(FEATS) == len(p2))
-    split_points = list(range(len(FEATS)))[1:]    
+    split_points = list(range(len(FEATS)))[1:]
+
+    print("\tCrossing:")
     split, _ = select_choice([(sp,1) for sp in split_points], choices)
-    return p1[0:split] + p2[split:]
+    res = p1[0:split] + p2[split:]
+    print("\tSplit point:", split, "result:", pp(res))
+    return res
 
 
 def mutate(p, p_mutation, choices):
     mutated = []
     for i in range(len(FEATS)):
+        print(f"\tMutating bit {i}")
         # add 1 bit with probability p_mutation to the value at index i
         mf, _ = select_choice([(p[i], 1 - p_mutation), ((p[i]+1) % len(FEATS[i]), p_mutation)],
                               choices)
         mutated.append(mf)
+        if mf == p[i]:
+            print("\tno mutation")
+        else:
+            print("\t", p[i], "->", mf)
 
     return tuple(mutated)
 
 
-def genetic(obj, pop, choices, max_it=10, p_mutation=0.1):
+def genetic(obj, pop, choices, max_it=10, p_mutation=0.1, interactive=False):
 
     it = 0
     best = sorted(pop, key=lambda x : obj(x))[-1]
@@ -59,8 +73,14 @@ def genetic(obj, pop, choices, max_it=10, p_mutation=0.1):
         print()
         
         for i in range(len(pop)):
+
+            if interactive: input()
             p1, p2 = select_parents(pop, obj, choices)
+
+            if interactive: input()
             child = reproduce(p1, p2, choices)
+
+            if interactive: input()
             mutated_child = mutate(child, p_mutation, choices)
             print("\t parent 1:", pp(p1), "parent 2:", pp(p2),
                   "made:", pp(child), "mutated:", pp(mutated_child))
@@ -126,7 +146,7 @@ if __name__ == '__main__':
     obj = lambda p : sum(p) + 1
 
     genetic(obj, initial_population, args.choices,
-            max_it=MAX_ITERS, p_mutation=args.p_mutation)
+            max_it=MAX_ITERS, p_mutation=args.p_mutation, interactive=True)
                 
 
 

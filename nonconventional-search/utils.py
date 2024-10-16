@@ -12,10 +12,14 @@ def select_choice(options, choices):
     cycled through. Options are weighted.
 
     '''
+    w_sum = sum(w for _, w in options)
+
+    print("\t\toptions:", [(o, w/w_sum) for o,w in options])
+    print("\t\tchoices:", choices)
+
     choice = choices.pop(0) 
     choices.append(choice) # cycling
 
-    w_sum = sum(w for _, w in options)
     p = 0
     for opt, w in options:
         p += w/w_sum
