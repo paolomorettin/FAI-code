@@ -123,7 +123,7 @@ if __name__ == '__main__':
                                                     replace=False)]
 
     # objective function
-    obj = lambda p : sum(p)
+    obj = lambda p : sum(p) + 1
 
     genetic(obj, initial_population, args.choices,
             max_it=MAX_ITERS, p_mutation=args.p_mutation)
