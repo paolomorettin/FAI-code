@@ -1,5 +1,5 @@
 
-
+import random
 from utils import select_choice
 
 hc_modes = ['steepest', 'stochastic-unweighted', 'stochastic']
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--seed', type=int,
                         help="Random seed number",
-                        default=666)
+                        default=int(random.random() * 1000))
 
     args = parser.parse_args()
     print(f"CHOICES: {args.choices}\nSEED: {args.seed}")
