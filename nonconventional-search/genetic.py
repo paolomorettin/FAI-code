@@ -15,13 +15,14 @@ def select_parents(pop, obj, choices):
 
     print("\tSelecting parents")
     
-    i1, _ = select_choice([(i, obj(p)) for i, p in enumerate(pop)],
-                          choices)
+    i1 = int(select_choice([(f"individual {i}", obj(p)) for i, p in enumerate(pop)],
+                           choices)[0].split(" ")[-1])
 
     print("\tparent1:", pp(pop[i1]))
     
-    i2, _ = select_choice([(i, obj(p)) for i, p in enumerate(pop) if i != i1],
-                          choices)
+    i2 = int(select_choice([(f"individual {i}", obj(p)) for i, p in enumerate(pop) if i != i1],
+                           choices)[0].split(" ")[-1])
+
     print("\tparent2:", pp(pop[i2]))
 
     return pop[i1], pop[i2]
@@ -35,7 +36,9 @@ def reproduce(p1, p2, choices):
     split_points = list(range(len(FEATS)))[1:]
 
     print("\tCrossing:")
-    split, _ = select_choice([(sp,1) for sp in split_points], choices)
+    split = int(select_choice([(f"split index {sp}",1) for sp in split_points],
+                              choices)[0].split(" ")[-1])
+
     res = p1[0:split] + p2[split:]
     print("\tSplit point:", split, "result:", pp(res))
     return res
@@ -46,8 +49,9 @@ def mutate(p, p_mutation, choices):
     for i in range(len(FEATS)):
         print(f"\tMutating bit {i}")
         # add 1 bit with probability p_mutation to the value at index i
-        mf, _ = select_choice([(p[i], 1 - p_mutation), ((p[i]+1) % len(FEATS[i]), p_mutation)],
-                              choices)
+        mf = int(select_choice([(f"keep value {p[i]}", 1 - p_mutation),
+                                (f"mutate to {(p[i]+1) % len(FEATS[i])}", p_mutation)],
+                               choices)[0].split(" ")[-1])
         mutated.append(mf)
         if mf == p[i]:
             print("\tno mutation")
