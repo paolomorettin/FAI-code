@@ -1,5 +1,5 @@
 
-import random
+
 from utils import select_choice
 
 hc_modes = ['steepest', 'stochastic-unweighted', 'stochastic']
@@ -128,14 +128,14 @@ if __name__ == '__main__':
     
     parser.add_argument('--seed', type=int,
                         help="Random seed number",
-                        default=int(random.random() * 1000))
+                        default=int(np.random.rand() * 1000))
 
     args = parser.parse_args()
 
     np.random.seed(args.seed)
     if args.choices == None:
         args.choices = [round(np.random.uniform(0, 1), 2) for x in range(0, 3)]
-    
+
     print(f"CHOICES: {args.choices}\nSEED: {args.seed}")
 
     # generating the objective function
