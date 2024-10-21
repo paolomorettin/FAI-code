@@ -1,4 +1,6 @@
 
+
+import numpy as np
 manhattan = lambda maze, s : abs(maze.goal[0] - s[0]) + abs(maze.goal[1] - s[1])
 
 
@@ -186,6 +188,10 @@ if __name__ == '__main__':
                         help=f"grid size",
                         default=2)
 
+    parser.add_argument('--max_cost', type=int,
+                        help=f"Max. action cost (>= 1)",
+                        default=1)
+
     parser.add_argument('--initial', type=int, nargs=2,
                         help=f"initial coordinates",
                         default=(1,1))
@@ -196,12 +202,15 @@ if __name__ == '__main__':
     
     parser.add_argument('--seed', type=int,
                         help="Random seed number",
-                        default=666)
+                        default=int(np.random.rand() * 1000))
 
     args = parser.parse_args()
-    
+    print(f"SEED: {args.seed}")
     maze = Maze(args.size)
-    maze.random(args.seed, init=tuple(args.initial), goal=tuple(args.goal))
+    maze.random(args.seed,
+                init=tuple(args.initial),
+                goal=tuple(args.goal),
+                max_cost=args.max_cost)
 
     if args.alg == 'odfs':
         online_dfs(maze, printer=odfs_printer)
