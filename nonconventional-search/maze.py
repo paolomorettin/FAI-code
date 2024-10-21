@@ -108,13 +108,11 @@ class Maze:
         n_shape = 's'
         e_size=15
         # '#264653'
-        col_r = '#2a9d8f'
-        col_f = '#e9c46a'
-        col_g = '#f4a261'
-        col_i = '#e76f51'
-        col_w = '#ffffff'
-        col_b = '#000000'
-
+        col_reached = '#f003fc'
+        col_goal = '#88fc03'
+        col_initial = '#fc0362'
+        col_white = '#ffffff'
+        col_black = '#000000'
 
         pos = {n : n for n in self.G.nodes}
 
@@ -122,19 +120,19 @@ class Maze:
 
         if curr is not None:
             nx.draw_networkx_nodes(self.G, pos, nodelist=[curr],
-                                   node_color=col_r, edgecolors=col_b,
+                                   node_color=col_reached, edgecolors=col_black,
                                    node_size=1.5*n_size, node_shape=n_shape)
 
         nx.draw_networkx_nodes(self.G, pos, nodelist=[self.goal],
-                               node_color=col_g, edgecolors=col_b,
+                               node_color=col_goal, edgecolors=col_black,
                                node_size=n_size, node_shape=n_shape)
             
         nx.draw_networkx_nodes(self.G, pos, nodelist=[self.init],
-                               node_color=col_i, edgecolors=col_b,
+                               node_color=col_initial, edgecolors=col_black,
                                node_size=n_size, node_shape=n_shape)
 
         nx.draw_networkx_nodes(self.G, pos, nodelist=other_nodes,
-                               node_color=col_w, edgecolors=col_b,
+                               node_color=col_white, edgecolors=col_black,
                                node_size=n_size, node_shape=n_shape)
 
         strlabels = {n : f'{n[0]},{n[1]}' for n in self.G.nodes}
