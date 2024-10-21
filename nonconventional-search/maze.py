@@ -19,7 +19,7 @@ class Maze:
         self.goal = None
 
 
-    def random(self, seed, init=None, goal=None):
+    def random(self, seed, init=None, goal=None, max_cost=None):
 
         def neighbors(curr):
             x, y = curr
@@ -44,7 +44,13 @@ class Maze:
                 break
 
             r, rn = list(candidates)[np.random.randint(len(candidates))]
-            self.G.add_edge(r, rn)
+
+            if max_cost is None:
+                c = 1
+            else:
+                c = np.random.randint(1, max_cost + 1)
+            
+            self.G.add_edge(r, rn, cost=c)
             reached.add(rn)
 
         if init is not None:
@@ -71,6 +77,16 @@ class Maze:
         if (x-1, y) in adj: alist.append('W')
 
         return alist
+
+    def cost(self, node, action):
+        x, y = node
+        if action == 'N': nxt = (x, y+1)
+        elif action == 'E': nxt = (x+1, y)
+        elif action == 'S': nxt = (x, y-1)
+        elif action == 'W': nxt = (x-1, y)
+
+        assert((node, nxt) in self.G.edges)
+        return self.G.edges[(node, nxt)]['cost']
 
 
     def execute(self, node, action):
@@ -124,6 +140,9 @@ class Maze:
         strlabels = {n : f'{n[0]},{n[1]}' for n in self.G.nodes}
         nx.draw_networkx_labels(self.G, pos, labels=strlabels)
         nx.draw_networkx_edges(self.G, pos, width=e_size)
+        costs = nx.get_edge_attributes(self.G, 'cost')
+        if len(set(costs.values())) > 1:
+            nx.draw_networkx_edge_labels(self.G, pos, edge_labels=costs)
 
         plt.gca().set_aspect('equal')
 
@@ -137,20 +156,8 @@ class Maze:
 
 if __name__ == '__main__':
 
-    side = 5
+    side = 3
     m = Maze(side)
-    m.random(666, init=(0,0), goal=(side, side))
+    m.random(666, init=(0,0), goal=(side, side), max_cost=4)
     m.plot()
     #m.plot(path='big_maze.png')
-
-
-            
-                       
-            
-        
-
-
-
-        
-
-        

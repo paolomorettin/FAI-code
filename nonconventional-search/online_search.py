@@ -1,7 +1,7 @@
 
 manhattan = lambda maze, s : abs(maze.goal[0] - s[0]) + abs(maze.goal[1] - s[1])
 
-action_costs = {'N' : 1, 'E' : 2, 'S' : 5, 'W' : 1}
+
 
 def simple_printer(it, maze, s_curr, *args):
     print(s_curr)
@@ -117,8 +117,7 @@ def lrtastar(maze, h, printer=None):
 
         s_next = None
         if s in result and a in result[s]:
-            # uniform c(s, a, s') = 1 in our mazes
-            return H[result[s][a]] + action_costs[a]
+            return H[result[s][a]] + maze.cost(s, a)
         else:
             return h(maze, s)
 
