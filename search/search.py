@@ -216,8 +216,11 @@ if __name__ == '__main__':
             problem = exercises.random_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
         elif args.exercise_type == 'sg': 
             problem = exercises.strange_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
-        else :
+        else:
             raise NotImplementedError(f"Algorithm {args.alg} not implemented.")
+            
+        if args.exercise_type == 'sg' and (args.alg == 'astar' or args.alg == 'greedy'):
+            raise NotImplementedError(f"Algorithm {args.alg} is not intended for sg type")
 
         if args.initial is not None:
             problem.initial = args.initial
