@@ -90,11 +90,10 @@ def pyplot_printer(it, problem, frontier, reached, curr, solution, folder=None, 
         
     
     nx.draw_networkx_labels(G, pos)
-    nx.draw_networkx_edges(G, pos, arrowsize=arrow_size, connectionstyle=f'arc3, rad = 0.25')
+    nx.draw_networkx_edges(G, pos, arrowsize=arrow_size, connectionstyle=f'arc3, rad = 0.15')
 
     costs = {e : G.edges[e]['cost'] for e in G.edges}
     nx.draw_networkx_edge_labels(G, pos, edge_labels=costs)
-
 
     if solution is not None and isinstance(solution, Solution):
         edgelist = []
@@ -102,7 +101,7 @@ def pyplot_printer(it, problem, frontier, reached, curr, solution, folder=None, 
             edgelist.append((solution[i].state, solution[i+1].state))
         
         nx.draw_networkx_edges(G, pos, edgelist=edgelist, width=1.5, edge_color=col_goal,
-                               arrowsize=arrow_size*1.5, connectionstyle=f'arc3, rad = 0.25')
+                               arrowsize=arrow_size*1.5, connectionstyle=f'arc3, rad = 0.15')
 
 
 

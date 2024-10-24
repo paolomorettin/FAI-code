@@ -159,6 +159,7 @@ def depth_first(problem, max_steps=100, printer=None):
 if __name__ == '__main__':
 
     import exercises
+    import numpy as np
     from printers import cli_printer, pyplot_printer, debug_printer
 
     import argparse
@@ -166,6 +167,10 @@ if __name__ == '__main__':
 
     parser.add_argument('alg', type=str,
                         help="Algorithm")
+                        
+    parser.add_argument('exercise_type', type=str,
+                        help=f"Type of the exercise: Grid (g) or SpecialGrid (sg)",
+                        default='g')
 
     parser.add_argument('--example', type=str,
                         help=f"One of {exercises.named_exercises}",
@@ -193,9 +198,10 @@ if __name__ == '__main__':
     
     parser.add_argument('--seed', type=int,
                         help="Random seed number",
-                        default=666)
+                        default=int(np.random.random() * 1000))
 
     args = parser.parse_args()
+    print("SEED:", args.seed)
 
     if args.example is not None:
         if args.example in exercises.named_exercises:
@@ -206,7 +212,15 @@ if __name__ == '__main__':
     else:
 
         w, h = map(int, tuple(args.grid_size))
-        problem = exercises.random_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
+        if args.exercise_type == 'g': 
+            problem = exercises.random_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
+        elif args.exercise_type == 'sg': 
+            problem = exercises.strange_grid_problem(w, h, p_edge=args.p_edge, cost=args.cost, seed=args.seed)
+        else:
+            raise NotImplementedError(f"Algorithm {args.alg} not implemented.")
+            
+        if args.exercise_type == 'sg' and (args.alg == 'astar' or args.alg == 'greedy'):
+            raise NotImplementedError(f"Algorithm {args.alg} is not intended for sg type")
 
         if args.initial is not None:
             problem.initial = args.initial

@@ -64,7 +64,88 @@ def random_grid_problem(width, height, p_edge=0.5, cost=None, seed=0):
 
         return problem
 
+def sg_sxy(x, y, graph_width):
+    s = 1
+    for y_p in range(y):
+        s += graph_width if y_p % 2 == 0 else graph_width - 1
+    s += x
+    return s
+    
+def sg_find_long_line_neighbours(x, y, width, height):
+    neighbours = []
+    if y % 2 == 0:
+        if(x == 0 or x == width - 1):
+            for y_p in range(0, height, 2):
+                if(y != y_p):
+                    neighbours.append(sg_sxy(x, y_p, width))
+        if(y == 0 or y == height - 1):
+            for x_p in range(0, width, 1):
+                if(x_p < x - 1 or x + 1 < x_p):
+                    neighbours.append(sg_sxy(x_p, y, width))
+    return neighbours
+    
+def sg_find_exa_neighbours(x, y, width, height):
+    neighbours = []
+    w_act = width if y % 2 == 0 else width - 1
+    if(x - 1 >= 0): #LEFT
+        neighbours.append(sg_sxy(x-1, y, width))
+    if(x + 1 < w_act): #RIGHT
+        neighbours.append(sg_sxy(x+1, y, width))
+    if(y % 2 == 0):
+        if(x < width - 1 and y + 1 < height): #Top-Right
+            neighbours.append(sg_sxy(x, y+1, width))
+        if(x < width - 1 and y - 1 >= 0): #Bottom-Right
+            neighbours.append(sg_sxy(x, y-1, width))
+        if(x - 1 >= 0 and y + 1 < height): #Top-Left
+            neighbours.append(sg_sxy(x-1, y+1, width))
+        if(x - 1 >= 0 and y - 1 >= 0): #Bottom-Left
+            neighbours.append(sg_sxy(x-1, y-1, width))
+    else:
+        if(x + 1 < width and y + 1 < height): #Top-Right
+            neighbours.append(sg_sxy(x+1, y+1, width))
+        if(x + 1 < width and y - 1 >= 0): #Bottom-Right
+            neighbours.append(sg_sxy(x+1, y-1, width))
+        if(y + 1 < height): #Top-Left
+            neighbours.append(sg_sxy(x, y+1, width))
+        if(y - 1 >= 0): #Bottom-Left
+            neighbours.append(sg_sxy(x, y-1, width))
+    return neighbours
 
+def strange_grid_problem(width, height, p_edge=0.3, cost=None, seed=0):
+    states = []
+    positions = {}
+    s = 1        
+    for y in range(height):
+        if y % 2 == 0:
+            for x in range(width):
+                states.append(s)
+                positions[s] = (x,y)
+                s += 1
+        else:
+            for x in range(width - 1):
+                states.append(s)
+                positions[s] = (x+0.5,y)
+                s += 1
+     
+    initial = 1
+    goals = {s-1}
+    problem = Problem(states, initial, goals, positions=positions)        
+    np.random.seed(seed)
+    
+    for y in range(height):
+        w_act = width if y % 2 == 0 else width - 1
+        for x in range(w_act):
+            s = sg_sxy(x, y, width)
+            for neighbour in sg_find_exa_neighbours(x, y, width, height) + sg_find_long_line_neighbours(x, y, width, height):
+                if np.random.random() < p_edge:
+                    if cost is not None:
+                        c = np.random.randint(cost[0], cost[1]+1)
+                    else:
+                        c = 1
+                    problem.add_action(s, neighbour, c=c, undir=False)
+
+    return problem    
+    
 named_exercises = {}
 
 ################################################## [SLIDES] TREE EXAMPLES
