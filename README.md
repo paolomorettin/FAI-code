@@ -4,8 +4,8 @@ Python3 code for the Fundamentals of AI course lab.
 Feel free to reuse / distribute / contribute.
 
 # Contributors:
-Mattia Rigon (2024) - Added support for LRTA* with non-uniform action costs.
-
+Mattia Rigon (2023) - Added support for LRTA* with non-uniform action costs.
+Alessandro Moscatelli (2024) - Added novel exercise types and quality-of-life changes.
 
 ## LABS 02/03 - Search algorithms
 
