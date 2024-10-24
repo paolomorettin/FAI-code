@@ -200,6 +200,10 @@ if __name__ == '__main__':
                         help="Random seed number",
                         default=int(np.random.random() * 1000))
 
+    parser.add_argument('--debug', action="store_true",
+                        help="Debug algorithm",
+                        default=False)
+
     args = parser.parse_args()
     print("SEED:", args.seed)
 
@@ -231,7 +235,9 @@ if __name__ == '__main__':
     
     #printer = cli_printer     # uncomment for a command line interface printer
     printer = pyplot_printer     # uncomment for a graphical (pyplot-based) printer
-    #printer = debug_printer
+
+    if args.debug:
+        printer = debug_printer
 
     # path cost (incr. state name in case of tie)
     no_heuristic = lambda node : (node.path_cost, node.state)
