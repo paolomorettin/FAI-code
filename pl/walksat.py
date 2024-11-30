@@ -1,42 +1,5 @@
 import numpy as np
-import re
-from utils import select_choice
-
-def generate_cnf(symbols, n_conj, max_disj, min_disj = 1):
-    '''
-    Creates a random formula in cnd form. 
-    The formula is expressed in a matrix where:
-    each cell in each row is in the same disjuction and
-    each row is in conjuction with the others
-    '''
-
-    cnf = []
-    for conj in range(0, n_conj):
-        choices = np.random.choice(
-            len(symbols), 
-            size=np.random.randint(min_disj, max_disj + 1), 
-            replace=False)
-        literals = []
-        for x in range(len(choices)):
-            if np.random.random() <= 0.5:
-                literals.append('!' + symbols[choices[x]])
-            else:
-                literals.append('' + symbols[choices[x]])
-        cnf.append(sorted(literals, key=lambda x: re.sub('[^A-Za-z]+', '', x).lower()))
-    return cnf
-
-def unsatisfied_clauses(symbols, clauses, model):
-    unsat = []
-    for clause in clauses:
-        sat = False
-        for literal in clause:
-            if('!' not in literal):
-                sat = sat or model[symbols.index(literal)]
-            else:
-                sat = sat or not model[symbols.index(literal.replace('!', ''))]
-        if not sat:
-            unsat.append(clause)
-    return unsat
+from utils import select_choice, unsatisfied_clauses
 
 def maximize_satisfied(symbols, clauses, model, target_clause):
     best_literal = None
@@ -86,6 +49,7 @@ if __name__ == '__main__':
     import argparse
     import itertools
     import re
+    from utils import generate_cnf
 
     parser = argparse.ArgumentParser()
 
