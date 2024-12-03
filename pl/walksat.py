@@ -47,11 +47,16 @@ def walksat(symbols, clauses, choices, max_flips=1000, p = 0.5):
 
 if __name__ == '__main__':
     import argparse
-    import itertools
-    import re
-    from utils import generate_cnf
+    from utils import parse_formula, generate_cnf, get_symbols
 
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('--solve', type=str, nargs='+', 
+                        help=f"List of literals in atrix form, where length of each clause is expressed in clause_lengths",
+                        default=None)
+    parser.add_argument('--clause_lengths', type=int, nargs='+',
+                        help=f"A list that expresses the lenght of each clauses in solve",
+                        default=None)
 
     parser.add_argument('-c', '--conjunctions', type=int,
                     help=f"Number of conjunctions in the formula",
@@ -59,6 +64,10 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--disjunctions', type=int, nargs=2,
                     help=f"Limit of minimum and maximum disjunctions in the formula",
                     default=(3, 4))
+    
+    parser.add_argument('-p', '--uninformed_probability', type=float,
+                        help=f"Sets the probability of uninformed_search",
+                        default=0.5)
     
     parser.add_argument('-l', '--literals', type=str, nargs="+",
                     help=f"Literal list from which the formula is created",
@@ -82,16 +91,20 @@ if __name__ == '__main__':
     symbols = args.literals
 
     if len(symbols) < args.disjunctions[1]:
-        raise AssertionError("Number of literals " +
+        raise ValueError("Number of literals " +
                              "is not sufficient to generate a formula " +
                              "with maximum disjunctions")
 
-    cnf = generate_cnf(symbols, args.conjunctions, args.disjunctions[1], min_disj=args.disjunctions[0])
+    if args.solve == None:
+        cnf = generate_cnf(symbols, args.conjunctions, args.disjunctions[1], min_disj=args.disjunctions[0])
+    elif args.solve != None and args.clause_lengths != None:
+        cnf = parse_formula(args.solve, args.clause_lengths)
+    else:
+        raise ValueError('Formula or disjunctions lengths not provided')
     print(cnf)
 
-    symbols = set([x.replace('!', '') for x in list(itertools.chain.from_iterable(cnf))])
-    symbols = sorted(list(symbols), key=lambda x: re.sub('[^A-Za-z]+', '', x).lower())
-    ans = walksat(symbols, cnf, args.choices)
+    symbols = get_symbols(cnf)
+    ans = walksat(symbols, cnf, args.choices, p = args.uninformed_probability)
 
     print(f"Formula: {cnf}")
     print(f"Solution of symbols {symbols} is {ans}")

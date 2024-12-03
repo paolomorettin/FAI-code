@@ -1,6 +1,7 @@
 import numpy as np 
 import re
 import networkx as nx
+import itertools
 
 def select_choice(options, choices):
     '''Simulated stochastic process that deterministically pick an
@@ -85,6 +86,31 @@ def hierarchy_pos(G, root=None, width=1., vert_gap = 0.2, vert_loc = 0, xcenter 
 
             
     return _hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)
+
+def parse_formula(array, disjunctions_lengths):
+    '''
+    Parses an array of strings into a cnf formula with 
+    len(disjunction_lengths) conjunctions and the specified
+    disjunctions lenghts for each clause
+    '''
+    cnf = []
+
+    if len(array) != sum(disjunctions_lengths):
+        raise ValueError("The number of given literals is not sufficient to construct the formula")
+
+    symbol_c = 0
+    i = 0
+    while i < len(disjunctions_lengths):
+        j = 0
+        clause = []
+        while j < disjunctions_lengths[i]:
+            clause.append(array[symbol_c])
+            symbol_c = symbol_c + 1
+            j = j + 1
+        cnf.append(sorted(clause, key=lambda x: re.sub('[^A-Za-z]+', '', x).lower()))
+        i = i + 1
+
+    return cnf
         
 def generate_cnf(symbols, n_conj, max_disj, min_disj = 1):
     '''
@@ -108,6 +134,16 @@ def generate_cnf(symbols, n_conj, max_disj, min_disj = 1):
                 literals.append('' + symbols[choices[x]])
         cnf.append(sorted(literals, key=lambda x: re.sub('[^A-Za-z]+', '', x).lower()))
     return cnf
+
+def get_symbols(cnf):
+    '''
+    Extracts symbols in alphabetical order
+    from a CNF formula
+    '''
+    symbols = set([x.replace('!', '') for x in list(itertools.chain.from_iterable(cnf))])
+    symbols = sorted(list(symbols), key=lambda x: re.sub('[^A-Za-z]+', '', x).lower())
+
+    return symbols
 
 def unsatisfied_clauses(symbols, clauses, model):
     '''

@@ -1,5 +1,7 @@
 import numpy as np
 import networkx as nx
+import itertools
+import re
 from utils import unsatisfied_clauses
 
 def find_unit_clause(symbols, clauses, model):
@@ -105,13 +107,17 @@ def dpll(clauses, symbols, model, search_tree, parent_node, labels):
 
 if __name__ == '__main__':
     import argparse
-    import itertools
-    import re
     import matplotlib.pyplot as plt
-    from networkx.drawing.nx_pydot import graphviz_layout
-    from utils import generate_cnf, hierarchy_pos
+    from utils import parse_formula, get_symbols, generate_cnf, hierarchy_pos
 
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('--solve', type=str, nargs='+', 
+                        help=f"List of literals in atrix form, where length of each clause is expressed in clause_lengths",
+                        default=None)
+    parser.add_argument('--clause_lengths', type=int, nargs='+',
+                        help=f"A list that expresses the lenght of each clauses in solve",
+                        default=None)
 
     parser.add_argument('-c', '--conjunctions', type=int,
                     help=f"Number of conjunctions in the formula",
@@ -135,17 +141,23 @@ if __name__ == '__main__':
     symbols = args.literals
 
     if len(symbols) < args.disjunctions[1]:
-        raise AssertionError("Number of literals " +
+        raise ValueError("Number of literals " +
                              "is not sufficient to generate a formula " +
                              "with maximum disjunctions")
-
-    cnf = generate_cnf(symbols, args.conjunctions, args.disjunctions[1], min_disj=args.disjunctions[0])
+    
+    if args.solve == None:
+        cnf = generate_cnf(symbols, args.conjunctions, args.disjunctions[1], min_disj=args.disjunctions[0])
+    elif args.solve != None and args.clause_lengths != None:
+        cnf = parse_formula(args.solve, args.clause_lengths)
+    else:
+        raise ValueError('Formula or disjunctions lengths not provided')
+    
     print(cnf)
 
     input()
     (ans, search_tree, labels) = dpll_satisfailable(cnf)
 
-    print(f"Solution of symbols {symbols} is {ans}")
+    print(f"Solution of symbols {get_symbols(cnf)} is {ans}")
 
     nx.draw(search_tree, pos=hierarchy_pos(search_tree, 0), labels=labels)
     plt.show()
